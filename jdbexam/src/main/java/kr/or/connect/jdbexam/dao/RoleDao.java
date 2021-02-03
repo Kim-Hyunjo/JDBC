@@ -8,6 +8,41 @@ public class RoleDao { //데이터 입력, 선택, 삭제, 추가 기능하는 �
 	private static String dbUser = "connectuser";
 	private static String dbPassword = "connect123!@#";
 	
+	public int addRole(Role role) {
+		int insertCnt = 0;
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+			String sql = "INSERT INTO role (role_id, description) VALUES (?,?)";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, role.getRoleId());
+			ps.setString(2, role.getDescription());
+			
+			insertCnt = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return insertCnt;
+	}
+		
 	public Role getRole(Integer roleId) {
 		Role role = null;
 		Connection conn = null; //연결 선언 객체
