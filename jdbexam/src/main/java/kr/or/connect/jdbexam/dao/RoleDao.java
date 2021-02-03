@@ -1,5 +1,7 @@
 package kr.or.connect.jdbexam.dao;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.sql.*;
 import kr.or.connect.jdbexam.dto.Role;
 
@@ -7,6 +9,35 @@ public class RoleDao { //데이터 입력, 선택, 삭제, 추가 기능하는 �
 	private static String dbUrl = "jdbc:mysql://localhost:3306/connectdb?useSSL=false";
 	private static String dbUser = "connectuser";
 	private static String dbPassword = "connect123!@#";
+	
+	public List<Role> getRoles(){
+		List<Role> roles = new ArrayList<>();
+		
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		String sql = "SELECT role_id, description FROM role order by role_id desc";
+		try(Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+				PreparedStatement ps = conn.prepareStatement(sql)){
+			try(ResultSet rs = ps.executeQuery()){
+				
+				while(rs.next()) {
+					int ri = rs.getInt(1);
+					String desc = rs.getString(2);
+					Role role = new Role(ri, desc);
+					roles.add(role);
+				}
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return roles;		
+	}
 	
 	public int addRole(Role role) {
 		int insertCnt = 0;
